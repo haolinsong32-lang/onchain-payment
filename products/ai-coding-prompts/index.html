@@ -126,5 +126,16 @@
     <p style="margin-top:12px;color:#8b949e;font-size:0.85em;">微信/支付宝扫码支付 · 即时交付</p>
   </div>
 </div>
+<script>
+  // 自动携带token参数到购买链接
+  (function() {
+    var qs = window.location.search;
+    if (qs) {
+      document.querySelectorAll('.buy-btn').forEach(function(link) {
+        link.href = link.href + qs;
+      });
+    }
+  })();
+</script>
 </body>
 </html>

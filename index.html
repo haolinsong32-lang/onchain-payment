@@ -535,6 +535,9 @@
             const price = card.dataset.price;
             const priceRMB = card.dataset.priceRmb;
             currentDeliveryUrl = card.dataset.delivery || '';
+            if (currentDeliveryUrl && window.location.search) {
+                currentDeliveryUrl += window.location.search;
+            }
 
             currentPrice = price;
             currentPriceRMB = priceRMB;
