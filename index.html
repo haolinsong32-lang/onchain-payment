@@ -118,39 +118,39 @@
 
         .payment-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
         .payment-modal.active { display: flex; }
-        .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; padding: 40px; max-width: 520px; width: 100%; position: relative; animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; padding: 24px; max-width: 480px; width: 100%; position: relative; animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); max-height: 92vh; overflow-y: auto; }
         @keyframes modalIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .modal-close { position: absolute; top: 20px; right: 20px; width: 36px; height: 36px; border-radius: 50%; background: var(--bg-secondary); border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; z-index: 10; }
         .modal-close:hover { background: var(--border); color: var(--text-primary); }
-        .modal-header { text-align: center; margin-bottom: 30px; }
-        .modal-header h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-        .modal-header p { color: var(--text-secondary); font-size: 14px; }
+        .modal-header { text-align: center; margin-bottom: 16px; }
+        .modal-header h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+        .modal-header p { color: var(--text-secondary); font-size: 13px; }
 
-        .modal-tabs { display: flex; gap: 0; margin-bottom: 24px; }
+        .modal-tabs { display: flex; gap: 0; margin-bottom: 14px; }
         .modal-tab { flex: 1; padding: 10px; text-align: center; background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-secondary); font-size: 13px; cursor: pointer; font-family: 'Noto Sans SC', sans-serif; transition: all 0.2s ease; }
         .modal-tab:first-child { border-radius: 8px 0 0 8px; }
         .modal-tab:last-child { border-radius: 0 8px 8px 0; }
         .modal-tab.active { background: var(--gradient-1); color: white; border-color: transparent; }
         .modal-tab:hover:not(.active) { border-color: var(--accent-cyan); color: var(--accent-cyan); }
 
-        .payment-info { background: var(--bg-secondary); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
-        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .payment-info { background: var(--bg-secondary); border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; }
+        .info-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border); }
         .info-row:last-child { border-bottom: none; }
-        .info-label { color: var(--text-secondary); font-size: 14px; }
-        .info-value { font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 14px; }
-        .info-value.amount { font-size: 24px; font-weight: 700; color: var(--accent-green); }
+        .info-label { color: var(--text-secondary); font-size: 12px; }
+        .info-value { font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 12px; }
+        .info-value.amount { font-size: 18px; font-weight: 700; color: var(--accent-green); }
 
         .address-display { background: var(--bg-primary); border: 1px solid var(--border); border-radius: 12px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; word-break: break-all; color: var(--text-secondary); margin-bottom: 24px; position: relative; }
         .copy-btn { position: absolute; top: 8px; right: 8px; padding: 6px 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary); font-size: 11px; cursor: pointer; transition: all 0.2s ease; }
         .copy-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
 
-        .qr-display { width: 200px; height: 200px; background: var(--bg-primary); border: 2px solid var(--border); border-radius: 16px; margin: 0 auto 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 13px; gap: 8px; overflow: hidden; }
+        .qr-display { width: 170px; height: 170px; background: var(--bg-primary); border: 2px solid var(--border); border-radius: 14px; margin: 0 auto 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 13px; gap: 8px; overflow: hidden; }
         .qr-display img { width: 100%; height: 100%; object-fit: contain; }
         .qr-display span { font-size: 48px; }
         .qr-display.wechat { border-color: var(--wechat-green); }
         .qr-display.alipay { border-color: var(--alipay-blue); }
-        .pay-amount-reminder { text-align: center; font-size: 2rem; font-weight: 900; color: var(--accent-green); margin-bottom: 12px; letter-spacing: -0.02em; }
-        .qr-label { text-align: center; font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+        .pay-amount-reminder { text-align: center; font-size: 1.5rem; font-weight: 900; color: var(--accent-green); margin-bottom: 8px; letter-spacing: -0.02em; }
+        .qr-label { text-align: center; font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; }
 
         .rmb-payment-options { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
         .rmb-option { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; }
@@ -172,9 +172,9 @@
         .chain-btn { padding: 8px 16px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); font-size: 12px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s ease; }
         .chain-btn.active, .chain-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(0, 212, 255, 0.1); }
 
-        .instructions { background: var(--bg-secondary); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
-        .instructions h4 { font-size: 14px; margin-bottom: 12px; color: var(--accent-cyan); }
-        .instructions ol { padding-left: 20px; color: var(--text-secondary); font-size: 13px; line-height: 2; }
+        .instructions { background: var(--bg-secondary); border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; }
+        .instructions h4 { font-size: 13px; margin-bottom: 6px; color: var(--accent-cyan); cursor: pointer; }
+        .instructions ol { padding-left: 20px; color: var(--text-secondary); font-size: 12px; line-height: 1.7; margin: 0; }
 
         .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); border: 1px solid var(--accent-green); border-radius: 12px; padding: 16px 24px; color: var(--accent-green); font-size: 14px; z-index: 2000; transition: transform 0.3s ease; box-shadow: 0 10px 40px rgba(0, 255, 136, 0.2); }
         .toast.show { transform: translateX(-50%) translateY(0); }
@@ -188,7 +188,7 @@
             .container { padding: 20px 16px; }
             header { flex-direction: column; gap: 16px; }
             .services { grid-template-columns: 1fr; }
-            .modal-content { padding: 24px; }
+            .modal-content { padding: 20px; }
             .rmb-payment-options { grid-template-columns: 1fr; }
         }
     </style>
@@ -363,41 +363,25 @@
                 <button class="modal-tab" data-modal-method="crypto" onclick="switchModalMethod('crypto', this)">₿ 加密货币</button>
             </div>
 
-            <div class="payment-info">
-                <div class="info-row">
-                    <span class="info-label">服务名称</span>
-                    <span class="info-value" id="modalServiceName">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">支付金额</span>
-                    <span class="info-value amount" id="modalAmount">¥0</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">支付方式</span>
-                    <span class="info-value" id="modalMethod">微信支付</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">状态</span>
-                    <span class="info-value" style="color: var(--accent-orange);">等待支付</span>
-                </div>
+            <div class="payment-info" style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="info-value" id="modalServiceName" style="font-size:14px;">-</span>
+                <span class="info-value amount" id="modalAmount" style="font-size:22px;">¥0</span>
             </div>
 
             <!-- 微信支付 -->
             <div id="wechatSection">
-                <div class="pay-amount-reminder" id="wechatAmount">¥35</div>
                 <div class="qr-display wechat">
                     <img src="assets/wechat-qr.jpg" alt="微信收款码">
                 </div>
-                <div class="qr-label" style="color:var(--wechat-green);">📱 打开微信扫一扫，输入上方金额后支付</div>
+                <div class="qr-label" style="color:var(--wechat-green);">📱 微信扫码支付</div>
             </div>
 
             <!-- 支付宝 -->
             <div id="alipaySection" class="hidden">
-                <div class="pay-amount-reminder" id="alipayAmount">¥35</div>
                 <div class="qr-display alipay">
                     <img src="assets/alipay-qr.png" alt="支付宝收款码">
                 </div>
-                <div class="qr-label" style="color:var(--alipay-blue);">📱 打开支付宝扫一扫，输入上方金额后支付</div>
+                <div class="qr-label" style="color:var(--alipay-blue);">📱 支付宝扫码支付</div>
             </div>
 
             <!-- 银行转账 -->
@@ -433,8 +417,8 @@
             </div>
 
             <div class="instructions">
-                <h4>支付步骤</h4>
-                <ol id="paymentInstructions">
+                <h4 onclick="this.nextElementSibling.classList.toggle('hidden')">支付步骤 ▾</h4>
+                <ol id="paymentInstructions" class="hidden">
                     <li>打开微信，扫描上方收款码</li>
                     <li>确认金额后完成支付</li>
                     <li>支付完成后点击下方按钮通知我们</li>
@@ -442,7 +426,7 @@
                 </ol>
             </div>
 
-            <button class="pay-btn" style="width: 100%; padding: 16px; font-size: 16px;" onclick="simulatePayment()">
+            <button class="pay-btn" style="width: 100%; padding: 14px; font-size: 15px;" onclick="simulatePayment()">
                 我已完成支付 ✓
             </button>
         </div>
@@ -489,7 +473,6 @@
             document.getElementById('cryptoSection').classList.add('hidden');
 
             const methodNames = { wechat: '微信支付', alipay: '支付宝', crypto: '加密货币' };
-            document.getElementById('modalMethod').textContent = methodNames[method];
 
             if (method === 'wechat') {
                 document.getElementById('wechatSection').classList.remove('hidden');
@@ -515,11 +498,7 @@
             document.getElementById('modalTitle').textContent = title;
             document.getElementById('modalServiceName').textContent = title;
 
-            // 更新收款码金额提示
             const amountStr = '¥' + priceRMB;
-            document.getElementById('wechatAmount').textContent = amountStr;
-            document.getElementById('alipayAmount').textContent = amountStr;
-
             if (isRMB) {
                 document.getElementById('modalAmount').textContent = amountStr;
                 switchModalMethod('wechat', document.querySelector('[data-modal-method="wechat"]'));
