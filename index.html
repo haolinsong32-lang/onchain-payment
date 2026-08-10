@@ -222,6 +222,25 @@
             </p>
         </section>
 
+        <!-- 爆品推荐 -->
+        <a href="products/ai-coding-prompts/index.html" target="_blank" style="display:block;text-decoration:none;background:linear-gradient(135deg,rgba(0,212,255,0.12),rgba(124,58,237,0.12));border:1px solid rgba(0,212,255,0.4);border-radius:16px;padding:20px 24px;margin-bottom:24px;transition:all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 30px rgba(0,212,255,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                <div style="display:flex;align-items:center;gap:14px;">
+                    <div style="font-size:36px;">🔥</div>
+                    <div>
+                        <div style="color:#00d4ff;font-weight:700;font-size:16px;margin-bottom:2px;">今日爆品 · 限时早鸟价</div>
+                        <div style="color:#fff;font-size:15px;font-weight:600;">AI编程效率提示词工具包 — 100+实战Prompt，复制即用</div>
+                        <div style="color:#8b949e;font-size:12px;margin-top:2px;">代码生成 · 调试 · 重构 · 测试 · 性能优化 | 即时交付</div>
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="color:#f85149;font-size:11px;text-decoration:line-through;">¥69</div>
+                    <div style="color:#00d4ff;font-size:24px;font-weight:800;">¥20</div>
+                    <div style="background:linear-gradient(135deg,#00d4ff,#7c3aed);color:#fff;padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;margin-top:2px;">立即获取 →</div>
+                </div>
+            </div>
+        </a>
+
         <div class="pay-method-toggle">
             <button class="active" data-method="rmb" onclick="switchPayMethod('rmb', this)">💰 人民币支付</button>
             <button data-method="crypto" onclick="switchPayMethod('crypto', this)">₿ 加密货币</button>
@@ -301,10 +320,10 @@
                 </div>
             </div>
 
-            <div class="service-card" data-service="creative" data-price="3" data-price-rmb="20" data-title="创意内容创作">
-                <div class="service-icon pink">✨</div>
-                <h3>创意内容创作</h3>
-                <p>文案撰写、营销内容、故事创作、诗歌、脚本。AI + 人工双重润色，高质量内容输出。</p>
+            <div class="service-card" data-service="prompts" data-price="3" data-price-rmb="20" data-title="AI编程提示词工具包" data-delivery="products/ai-coding-prompts/content.html" style="border-color: rgba(0,212,255,0.4);">
+                <div class="service-icon cyan">📋</div>
+                <h3>AI编程提示词工具包 <span style="background:linear-gradient(135deg,#00d4ff,#7c3aed);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;margin-left:4px;">爆款</span></h3>
+                <p>100+实战验证Prompt，覆盖代码生成、调试、重构、测试、性能优化。复制即用，兼容ChatGPT/Claude/Cursor。支付后即时交付。</p>
                 <div class="service-footer">
                     <div class="price">
                         <span class="price-amount rmb-price">¥20</span>
@@ -467,6 +486,7 @@
         let totalRevenue = 0;
         let isRMB = true;
         let modalOriginalHTML = '';
+        let currentDeliveryUrl = '';
 
         const chainNames = {
             'xlayer': 'X Layer', 'ethereum': 'Ethereum', 'base': 'Base',
@@ -514,6 +534,7 @@
             const title = card.dataset.title;
             const price = card.dataset.price;
             const priceRMB = card.dataset.priceRmb;
+            currentDeliveryUrl = card.dataset.delivery || '';
 
             currentPrice = price;
             currentPriceRMB = priceRMB;
@@ -588,22 +609,25 @@
             // 显示支付成功确认
             const modalContent = document.querySelector('.modal-content');
             modalOriginalHTML = modalContent.innerHTML;
+            const deliveryHtml = currentDeliveryUrl
+                ? `<a href="${currentDeliveryUrl}" target="_blank" style="display:block;width:100%;padding:14px;background:linear-gradient(135deg,#00d4ff,#7c3aed);color:#fff;text-align:center;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;margin-bottom:10px;">📦 立即获取产品 →</a><p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">支付已确认，点击上方按钮立即查看完整内容</p>`
+                : `<p style="color:var(--text-muted);font-size:13px;margin-bottom:24px">我们会在1-2小时内完成服务交付</p>`;
             modalContent.innerHTML = `
-                <div style="text-align:center;padding:40px 20px">
-                    <div style="font-size:64px;margin-bottom:16px">✅</div>
-                    <h2 style="color:var(--accent-green);margin-bottom:8px">支付确认已收到</h2>
+                <div style="text-align:center;padding:30px 20px">
+                    <div style="font-size:56px;margin-bottom:12px">✅</div>
+                    <h2 style="color:var(--accent-green);margin-bottom:8px">支付成功</h2>
                     <p style="color:var(--text-secondary);margin-bottom:4px">服务：${document.getElementById('modalServiceName').textContent}</p>
-                    <p style="color:var(--text-secondary);margin-bottom:4px">金额：${document.getElementById('modalAmount').textContent}</p>
-                    <p style="color:var(--text-muted);font-size:13px;margin-bottom:24px">我们会在1-2小时内完成服务交付</p>
-                    <div style="background:var(--bg-primary);border-radius:12px;padding:16px;margin-bottom:16px;text-align:left">
-                        <p style="font-size:12px;color:var(--text-muted);margin:0">📧 如有问题请联系：suka@SUKA.net</p>
-                        <p style="font-size:12px;color:var(--text-muted);margin:4px 0 0">🌐 <a href="https://suka.net.cn" style="color:var(--accent-blue)">suka.net.cn</a></p>
-                    </div>
-                    <button class="pay-btn" style="width:100%;padding:14px;font-size:15px" onclick="closePayment()">关闭</button>
+                    <p style="color:var(--text-secondary);margin-bottom:20px">金额：${document.getElementById('modalAmount').textContent}</p>
+                    ${deliveryHtml}
+                    <button class="pay-btn" style="width:100%;padding:12px;font-size:14px;background:var(--bg-secondary);color:var(--text-secondary)" onclick="closePayment()">关闭</button>
                 </div>
             `;
-            // 3秒后自动关闭
-            setTimeout(() => { closePayment(); }, 5000);
+            // 数字产品3秒后自动打开交付页面
+            if (currentDeliveryUrl) {
+                setTimeout(() => { window.open(currentDeliveryUrl, '_blank'); }, 2500);
+            } else {
+                setTimeout(() => { closePayment(); }, 5000);
+            }
         }
 
         document.getElementById('paymentModal').addEventListener('click', function(e) {
