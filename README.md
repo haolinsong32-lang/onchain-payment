@@ -105,7 +105,7 @@ graph TB
 
 ```bash
 # Clone
-git clone https://github.com/YOUR_USERNAME/onchain-payment.git
+git clone https://github.com/haolinsong32-lang/onchain-payment.git
 cd onchain-payment
 
 # Copy config
@@ -176,8 +176,8 @@ onchain-payment/
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
-- 🐛 [Bug Report](https://github.com/YOUR_USERNAME/onchain-payment/issues/new?template=bug_report.md)
-- 💡 [Feature Request](https://github.com/YOUR_USERNAME/onchain-payment/issues/new?template=feature_request.md)
+- 🐛 [Bug Report](https://github.com/haolinsong32-lang/onchain-payment/issues/new?template=bug_report.md)
+- 💡 [Feature Request](https://github.com/haolinsong32-lang/onchain-payment/issues/new?template=feature_request.md)
 - 🔧 PRs welcome — 遵循 [Conventional Commits](https://www.conventionalcommits.org/)
 
 ## 📄 License
