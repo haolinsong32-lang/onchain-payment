@@ -586,6 +586,21 @@
             });
         }
 
+        // 自动打开支付弹窗（通过URL参数 ?buy=prompts）
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var buyService = params.get('buy');
+            if (buyService) {
+                setTimeout(function() {
+                    var card = document.querySelector('.service-card[data-service="' + buyService + '"]');
+                    if (card) {
+                        var btn = card.querySelector('.btn-primary, button, a');
+                        if (btn) openPayment(btn);
+                    }
+                }, 500);
+            }
+        })();
+
         function copyAddress() {
             const addr = document.getElementById('paymentAddress').textContent;
             navigator.clipboard.writeText(addr).then(() => showToast('地址已复制到剪贴板'));
