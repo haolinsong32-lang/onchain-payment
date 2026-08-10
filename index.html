@@ -149,6 +149,7 @@
         .qr-display span { font-size: 48px; }
         .qr-display.wechat { border-color: var(--wechat-green); }
         .qr-display.alipay { border-color: var(--alipay-blue); }
+        .pay-amount-reminder { text-align: center; font-size: 2rem; font-weight: 900; color: var(--accent-green); margin-bottom: 12px; letter-spacing: -0.02em; }
         .qr-label { text-align: center; font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
 
         .rmb-payment-options { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
@@ -383,22 +384,20 @@
 
             <!-- 微信支付 -->
             <div id="wechatSection">
+                <div class="pay-amount-reminder" id="wechatAmount">¥35</div>
                 <div class="qr-display wechat">
-                    <span>💚</span>
-                    <div>微信收款码</div>
-                    <div style="font-size:11px;color:var(--text-muted);">扫码支付</div>
+                    <img src="assets/wechat-qr.jpg" alt="微信收款码">
                 </div>
-                <div class="qr-label" style="color:var(--wechat-green);">📱 打开微信扫一扫，扫码支付</div>
+                <div class="qr-label" style="color:var(--wechat-green);">📱 打开微信扫一扫，输入上方金额后支付</div>
             </div>
 
             <!-- 支付宝 -->
             <div id="alipaySection" class="hidden">
+                <div class="pay-amount-reminder" id="alipayAmount">¥35</div>
                 <div class="qr-display alipay">
-                    <span>💙</span>
-                    <div>支付宝收款码</div>
-                    <div style="font-size:11px;color:var(--text-muted);">扫码支付</div>
+                    <img src="assets/alipay-qr.png" alt="支付宝收款码">
                 </div>
-                <div class="qr-label" style="color:var(--alipay-blue);">📱 打开支付宝扫一扫，扫码支付</div>
+                <div class="qr-label" style="color:var(--alipay-blue);">📱 打开支付宝扫一扫，输入上方金额后支付</div>
             </div>
 
             <!-- 银行转账 -->
@@ -460,6 +459,7 @@
         let txCount = 0;
         let totalRevenue = 0;
         let isRMB = true;
+        let modalOriginalHTML = '';
 
         const chainNames = {
             'xlayer': 'X Layer', 'ethereum': 'Ethereum', 'base': 'Base',
@@ -515,8 +515,13 @@
             document.getElementById('modalTitle').textContent = title;
             document.getElementById('modalServiceName').textContent = title;
 
+            // 更新收款码金额提示
+            const amountStr = '¥' + priceRMB;
+            document.getElementById('wechatAmount').textContent = amountStr;
+            document.getElementById('alipayAmount').textContent = amountStr;
+
             if (isRMB) {
-                document.getElementById('modalAmount').textContent = '¥' + priceRMB;
+                document.getElementById('modalAmount').textContent = amountStr;
                 switchModalMethod('wechat', document.querySelector('[data-modal-method="wechat"]'));
             } else {
                 document.getElementById('modalAmount').textContent = price + ' USDT';
@@ -528,6 +533,13 @@
 
         function closePayment() {
             document.getElementById('paymentModal').classList.remove('active');
+            // 如果弹窗内容被替换为确认页，需要恢复原始内容
+            if (modalOriginalHTML) {
+                document.querySelector('.modal-content').innerHTML = modalOriginalHTML;
+                modalOriginalHTML = '';
+                // 重新绑定事件
+                initModalEvents();
+            }
         }
 
         document.querySelectorAll('.chain-btn').forEach(btn => {
@@ -537,6 +549,16 @@
                 currentChain = this.dataset.chain;
             });
         });
+
+        function initModalEvents() {
+            document.querySelectorAll('.chain-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.chain-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentChain = this.dataset.chain;
+                });
+            });
+        }
 
         function copyAddress() {
             const addr = document.getElementById('paymentAddress').textContent;
@@ -560,8 +582,26 @@
                 document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toFixed(2);
             }
             document.getElementById('txCount').textContent = txCount;
-            showToast('支付成功！服务已激活');
-            closePayment();
+
+            // 显示支付成功确认
+            const modalContent = document.querySelector('.modal-content');
+            modalOriginalHTML = modalContent.innerHTML;
+            modalContent.innerHTML = `
+                <div style="text-align:center;padding:40px 20px">
+                    <div style="font-size:64px;margin-bottom:16px">✅</div>
+                    <h2 style="color:var(--accent-green);margin-bottom:8px">支付确认已收到</h2>
+                    <p style="color:var(--text-secondary);margin-bottom:4px">服务：${document.getElementById('modalServiceName').textContent}</p>
+                    <p style="color:var(--text-secondary);margin-bottom:4px">金额：${document.getElementById('modalAmount').textContent}</p>
+                    <p style="color:var(--text-muted);font-size:13px;margin-bottom:24px">我们会在1-2小时内完成服务交付</p>
+                    <div style="background:var(--bg-primary);border-radius:12px;padding:16px;margin-bottom:16px;text-align:left">
+                        <p style="font-size:12px;color:var(--text-muted);margin:0">📧 如有问题请联系：suka@SUKA.net</p>
+                        <p style="font-size:12px;color:var(--text-muted);margin:4px 0 0">🌐 <a href="https://suka.net.cn" style="color:var(--accent-blue)">suka.net.cn</a></p>
+                    </div>
+                    <button class="pay-btn" style="width:100%;padding:14px;font-size:15px" onclick="closePayment()">关闭</button>
+                </div>
+            `;
+            // 3秒后自动关闭
+            setTimeout(() => { closePayment(); }, 5000);
         }
 
         document.getElementById('paymentModal').addEventListener('click', function(e) {
