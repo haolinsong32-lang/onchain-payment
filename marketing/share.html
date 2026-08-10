@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUKA.net - 分享工具箱</title>
+<style>
+:root { --bg: #06060e; --card: #0c0c18; --border: #222240; --cyan: #00d4ff; --purple: #a855f7; --green: #00ff88; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); color: #e8e8f0; min-height: 100vh; padding: 20px; }
+h1 { text-align: center; font-size: 24px; font-weight: 800; margin: 20px 0 8px; background: linear-gradient(135deg, #00d4ff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.sub { text-align: center; color: #8888b0; font-size: 14px; margin-bottom: 24px; }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+.card h2 { font-size: 16px; color: var(--cyan); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.card h2 .platform { font-size: 12px; padding: 2px 10px; border-radius: 50px; background: rgba(0,212,255,.1); color: var(--cyan); }
+.post-text { background: rgba(0,0,0,.3); border: 1px solid var(--border); border-radius: 10px; padding: 14px; font-size: 14px; line-height: 1.6; color: #c0c0e0; white-space: pre-wrap; margin-bottom: 12px; font-family: system-ui; }
+.copy-btn { width: 100%; padding: 12px; border-radius: 10px; background: linear-gradient(135deg, #00d4ff, #a855f7); color: #000; border: none; font-size: 15px; font-weight: 700; cursor: pointer; transition: all .2s; }
+.copy-btn:active { transform: scale(.97); }
+.copy-btn.copied { background: var(--green); }
+.preview-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 12px; }
+.img-btns { display: flex; gap: 10px; }
+.img-btn { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--cyan); font-size: 13px; cursor: pointer; text-align: center; text-decoration: none; }
+.links { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.link-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; text-decoration: none; color: var(--cyan); font-size: 14px; font-weight: 600; }
+.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--green); color: #000; padding: 10px 24px; border-radius: 50px; font-weight: 700; font-size: 14px; opacity: 0; transition: opacity .3s; z-index: 99; }
+.toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<h1>⚡ SUKA.net 分享工具箱</h1>
+<div class="sub">点击复制按钮 → 打开 Twitter / 即刻 / 微博 → 粘贴发送</div>
+
+<!-- 帖子 1 -->
+<div class="card">
+  <h2>📌 <span class="platform">Twitter</span> 帖子 1 — 产品发布</h2>
+  <div class="post-text" id="post1">🚀 Introducing SUKA.net — The AI Agent Monetization Engine
+
+Turn your AI capabilities into instant revenue. 6 professional services × 6 blockchain networks × dual-currency settlement.
+
+• Code Development & Debugging — from 5 USDT
+• Data Analysis Reports — from 10 USDT
+• Full-stack Web/DApp Development — from 20 USDT
+• Deep Research Reports — from 8 USDT
+• Creative Content — from 3 USDT
+• 1-on-1 Consulting — 15 USDT / 30 min
+
+Pay via WeChat, Alipay, or Crypto. 0 Gas on X Layer.
+
+Built on @OKX Onchain OS.
+
+🔗 suka.net.cn
+
+#AI #Web3 #Crypto #BuildInPublic</div>
+  <button class="copy-btn" onclick="copyPost('post1', this)">📋 复制这段文字</button>
+</div>
+
+<!-- 帖子 2 -->
+<div class="card">
+  <h2>⚙️ <span class="platform">Twitter</span> 帖子 2 — 技术展示</h2>
+  <div class="post-text" id="post2">Just shipped: A complete AI Agent monetization stack that accepts both fiat AND crypto payments.
+
+• EVM multi-chain: X Layer, Ethereum, BSC, Arbitrum, Base, Polygon
+• Instant settlement via smart contracts
+• Zero gas fees on X Layer
+• Fully automated: pay → verify → deliver → receive
+
+This is the future of freelance work.
+
+🔗 suka.net.cn
+
+#Web3Dev #Crypto #AI</div>
+  <button class="copy-btn" onclick="copyPost('post2', this)">📋 复制这段文字</button>
+</div>
+
+<!-- 帖子 3 -->
+<div class="card">
+  <h2>🪝 <span class="platform">Twitter</span> 帖子 3 — 痛点钩子</h2>
+  <div class="post-text" id="post3">Problem: AI agents are powerful but can't collect payments.
+
+Solution: SUKA.net — the payment layer for AI services.
+
+✅ Crypto-native instant settlement
+✅ No platform fees or commissions
+✅ Global reach, anyone can pay
+✅ 0 Gas on X Layer
+
+🔗 suka.net.cn</div>
+  <button class="copy-btn" onclick="copyPost('post3', this)">📋 复制这段文字</button>
+</div>
+
+<!-- 配图 -->
+<div class="card">
+  <h2>🖼️ 配图（长按保存到手机）</h2>
+  <img class="preview-img" src="twitter-card.png" alt="SUKA.net Twitter Card" onerror="this.src='https://ai-agent-pay-fmmr578s5b-nu7kvpzwip.preview.iga-pages.com/marketing/twitter-card.png'">
+  <div class="img-btns">
+    <a class="img-btn" href="twitter-card.png" download>💾 下载图片</a>
+    <a class="img-btn" href="#" onclick="window.open('twitter-card.png');return false">🔍 查看大图</a>
+  </div>
+</div>
+
+<!-- 快速链接 -->
+<div class="links" style="margin-bottom:40px">
+  <a class="link-card" href="https://ai-agent-pay-fmmr578s5b-nu7kvpzwip.preview.iga-pages.com">🌐 主站</a>
+  <a class="link-card" href="https://ai-agent-pay-fmmr578s5b-nu7kvpzwip.preview.iga-pages.com/marketing/">📄 营销页</a>
+  <a class="link-card" href="https://twitter.com/intent/tweet">🐦 打开 Twitter</a>
+  <a class="link-card" href="#" onclick="window.open('WeChat://');return false">💬 发朋友圈</a>
+</div>
+
+<div class="toast" id="toast">✅ 已复制！去 Twitter 粘贴发送</div>
+
+<script>
+function copyPost(id, btn) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✅ 已复制！';
+    btn.classList.add('copied');
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); btn.textContent = '📋 复制这段文字'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent = '✅ 已复制！';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 复制这段文字'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+</body>
+</html>

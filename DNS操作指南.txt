@@ -1,0 +1,25 @@
+# DNS CNAME 配置 — 精确定位指南
+
+## 目标
+把 `www.suka.net.cn` 指向 IGA Pages
+
+## 当前状态
+- 域名：suka.net.cn（阿里云 DNS 控制台已登录）
+- 现有 www 记录：A 记录 → 81.70.181.128（需删除）
+- CNAME 目标值：`ai-agent-pay-fmmr578s5b.preview.iga-pages.com`
+
+## 操作步骤（2 步，约 30 秒）
+
+### 第 1 步：进入解析设置
+1. 打开 https://dns.console.aliyun.com/
+2. 找到 suka.net.cn 所在行，点击右侧「解析设置」按钮
+
+### 第 2 步：删除旧 A 记录 + 添加 CNAME
+1. 找到 `www` 类型 A 值 `81.70.181.128` 的记录 → 点「删除」
+2. 点「添加记录」→ 类型选 **CNAME** → 主机记录填 `www` → 记录值填 `ai-agent-pay-fmmr578s5b.preview.iga-pages.com` → 确定
+
+### 验证（2-10 分钟后）
+```bash
+nslookup www.suka.net.cn
+```
+应返回指向 IGA Pages 的 CNAME 解析结果。

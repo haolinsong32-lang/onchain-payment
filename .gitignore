@@ -1,0 +1,67 @@
+# ===== Dependencies =====
+node_modules/
+.pnpm-store/
+vendor/
+
+# ===== Build Output =====
+dist/
+build/
+out/
+*.log
+
+# ===== IGA Pages =====
+.iga/
+
+# ===== Sensitive Config =====
+config.json
+.okx/
+*.pem
+*.key
+.env
+.env.local
+.env.*.local
+secrets/
+
+# ===== OS Files =====
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ===== IDE & Editor =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+.code-workspace
+
+# ===== Windows =====
+*.exe
+*.msi
+*.tmp
+*.temp
+
+# ===== Archives =====
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# ===== Local Scripts (contain hardcoded paths) =====
+*.bat
+!example.bat
+
+# ===== Screenshots (keep in /docs if needed) =====
+网站预览*.png
+宣传海报.jpg
