@@ -49,7 +49,7 @@
       <span class="price">¥20</span>
       <span class="price-original">¥69</span>
     </div>
-    <a class="buy-btn" href="../index.html" target="_blank">立即购买 →</a>
+    <a class="buy-btn" href="/index.html?buy=prompts" target="_blank">立即购买 →</a>
   </div>
 
   <div class="features">
@@ -132,7 +132,7 @@
     var qs = window.location.search;
     if (qs) {
       document.querySelectorAll('.buy-btn').forEach(function(link) {
-        link.href = link.href + qs;
+        link.href = link.href + '&' + qs.substring(1);
       });
     }
   })();
