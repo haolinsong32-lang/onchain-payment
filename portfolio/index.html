@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>林一舟 · 独立游戏开发者</title>
+<meta name="description" content="林一舟 — 独立游戏开发者个人作品集：Steam 游戏、Game Jam 原型、技术博客与开发日志。" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg-0:#05070c;
+    --bg-1:#0a0e18;
+    --bg-2:#10162a;
+    --bg-3:#151d36;
+    --line:#1e2745;
+    --line-soft:#18203a;
+    --text:#e8eeff;
+    --muted:#8d97b4;
+    --muted-2:#5c6686;
+    --cyan:#4df3ff;
+    --pink:#ff3d8b;
+    --lime:#b6ff2e;
+    --amber:#ffb020;
+    --purple:#9d6bff;
+    --red:#ff5c5c;
+    --mono:'JetBrains Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+    --sans:'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --glow-cyan:0 0 18px rgba(77,243,255,.35);
+    --glow-pink:0 0 18px rgba(255,61,139,.35);
+    --glow-lime:0 0 18px rgba(182,255,46,.3);
+    --radius:14px;
+    --nav-h:64px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 16px);}
+  body{
+    background:var(--bg-0);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.7;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{background:var(--pink);color:#0a0210;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+  img,svg{display:block;}
+  ul{list-style:none;}
+
+  /* ---------- background atmosphere ---------- */
+  .bg-scene{
+    position:fixed;inset:0;z-index:-3;overflow:hidden;
+    background:
+      radial-gradient(1100px 700px at 78% -10%, rgba(157,107,255,.14), transparent 60%),
+      radial-gradient(900px 650px at 8% 20%, rgba(77,243,255,.10), transparent 60%),
+      radial-gradient(1000px 800px at 50% 110%, rgba(255,61,139,.10), transparent 55%),
+      linear-gradient(180deg,var(--bg-1),var(--bg-0) 55%);
+  }
+  .bg-grid{
+    position:fixed;left:0;right:0;bottom:0;height:46vh;z-index:-2;
+    background:
+      linear-gradient(180deg, transparent, rgba(77,243,255,.05)),
+      repeating-linear-gradient(90deg, rgba(77,243,255,.12) 0 1px, transparent 1px 44px),
+      repeating-linear-gradient(0deg, rgba(77,243,255,.12) 0 1px, transparent 1px 44px);
+    transform:perspective(480px) rotateX(64deg);
+    transform-origin:bottom;
+    -webkit-mask-image:linear-gradient(180deg, transparent, #000 45%);
+            mask-image:linear-gradient(180deg, transparent, #000 45%);
+    opacity:.6;
+    animation:grid-drift 14s linear infinite;
+  }
+  @keyframes grid-drift{
+    from{background-position:0 0,0 0,0 0;}
+    to{background-position:0 0,0 0,44px 0;}
+  }
+  .scanlines{
+    position:fixed;inset:0;z-index:50;pointer-events:none;opacity:.05;
+    background:repeating-linear-gradient(0deg, rgba(255,255,255,.6) 0 1px, transparent 1px 3px);
+    mix-blend-mode:overlay;
+  }
+  .noise{
+    position:fixed;inset:0;z-index:49;pointer-events:none;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- boot bar ---------- */
+  #bootbar{
+    position:fixed;top:0;left:0;right:0;height:2px;z-index:120;background:var(--bg-3);
+  }
+  #bootbar::after{
+    content:"";position:absolute;inset:0;transform-origin:left;
+    background:linear-gradient(90deg,var(--cyan),var(--pink),var(--lime));
+    animation:boot 1.2s var(--ease) forwards;
+  }
+  @keyframes boot{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+  .booted #bootbar{opacity:0;transition:opacity .5s .4s;}
+
+  /* ---------- cursor ---------- */
+  .cursor-dot,.cursor-ring{position:fixed;top:0;left:0;z-index:200;pointer-events:none;display:none;}
+  @media (pointer:fine){
+    .cursor-dot,.cursor-ring{display:block;}
+    body{cursor:none;}
+    a,button{cursor:none;}
+  }
+  .cursor-dot{width:9px;height:9px;margin:-4.5px 0 0 -4.5px;background:var(--cyan);border-radius:50%;box-shadow:var(--glow-cyan);}
+  .cursor-ring{width:34px;height:34px;margin:-17px 0 0 -17px;border:1px solid rgba(77,243,255,.55);border-radius:50%;transition:width .2s,height .2s,margin .2s,border-color .2s,background .2s;}
+  .cursor-ring.is-hover{width:52px;height:52px;margin:-26px 0 0 -26px;border-color:var(--pink);background:rgba(255,61,139,.08);}
+
+  /* ---------- nav ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);
+    display:flex;align-items:center;justify-content:space-between;padding:0 clamp(16px,4vw,40px);
+    background:rgba(5,7,12,.72);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .brand{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:14px;letter-spacing:.08em;}
+  .brand .logo{
+    width:30px;height:30px;display:grid;place-items:center;border-radius:7px;
+    background:linear-gradient(135deg,var(--cyan),var(--purple));
+    color:#041018;font-weight:800;font-size:14px;
+    box-shadow:var(--glow-cyan);
+  }
+  .brand .tag{color:var(--muted);font-size:11px;letter-spacing:.14em;text-transform:uppercase;}
+  nav.menu{display:flex;align-items:center;gap:4px;}
+  nav.menu a{
+    position:relative;padding:8px 12px;font-family:var(--mono);font-size:13px;color:var(--muted);
+    letter-spacing:.04em;border-radius:8px;transition:color .2s;
+  }
+  nav.menu a:hover{color:var(--text);}
+  nav.menu a::after{
+    content:"";position:absolute;left:12px;right:12px;bottom:4px;height:2px;
+    background:var(--cyan);transform:scaleX(0);transform-origin:left;transition:transform .25s var(--ease);
+  }
+  nav.menu a:hover::after{transform:scaleX(1);}
+  .nav-actions{display:flex;align-items:center;gap:10px;}
+  .lang-btn{
+    display:inline-flex;align-items:center;gap:8px;padding:8px 14px;
+    border:1px solid var(--line);border-radius:999px;font-family:var(--mono);
+    font-size:12px;letter-spacing:.1em;color:var(--text);background:var(--bg-2);
+    transition:border-color .2s,box-shadow .2s;
+  }
+  .lang-btn:hover{border-color:var(--cyan);box-shadow:var(--glow-cyan);}
+  .lang-btn .globe{font-size:14px;color:var(--cyan);}
+  .lang-btn .lang-label{min-width:22px;text-align:center;}
+  .menu-toggle{display:none;width:38px;height:38px;border:1px solid var(--line);border-radius:9px;place-items:center;}
+  .menu-toggle span{display:block;width:16px;height:2px;background:var(--text);margin:2px 0;transition:.25s;}
+
+  /* ---------- layout ---------- */
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,40px);}
+  section{padding:96px 0 40px;position:relative;}
+  .section-head{margin-bottom:44px;}
+  .section-head .num{
+    font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);
+    display:flex;align-items:center;gap:12px;margin-bottom:14px;
+  }
+  .section-head .num::after{content:"";flex:1;max-width:120px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent);}
+  .section-head h2{
+    font-family:var(--mono);font-size:clamp(26px,4.4vw,44px);font-weight:800;letter-spacing:.01em;line-height:1.1;
+  }
+  .section-head h2 .accent{color:var(--cyan);text-shadow:var(--glow-cyan);}
+  .section-head p.sub{color:var(--muted);margin-top:12px;max-width:560px;font-size:15px;}
+
+  /* ---------- hero ---------- */
+  .hero{min-height:100vh;display:flex;align-items:center;padding-top:calc(var(--nav-h) + 40px);}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;width:100%;}
+  .hero-kicker{
+    display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;
+    letter-spacing:.2em;text-transform:uppercase;color:var(--lime);
+    border:1px solid rgba(182,255,46,.3);background:rgba(182,255,46,.05);
+    padding:7px 14px;border-radius:999px;margin-bottom:26px;
+  }
+  .hero-kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:var(--glow-lime);animation:pulse 1.6s infinite;}
+  @keyframes pulse{50%{opacity:.35;}}
+  .hero h1{
+    font-size:clamp(46px,9vw,104px);line-height:.96;font-weight:900;letter-spacing:-.01em;
+    font-family:var(--sans);
+  }
+  .hero h1 .latin{display:block;font-family:var(--mono);font-size:clamp(14px,1.7vw,19px);font-weight:500;letter-spacing:.34em;color:var(--muted-2);margin:14px 0 4px;text-transform:uppercase;}
+  .hero .role{
+    font-family:var(--mono);font-size:clamp(16px,2.2vw,22px);color:var(--cyan);letter-spacing:.05em;margin:18px 0 20px;
+    text-shadow:var(--glow-cyan);
+  }
+  .hero .role .cursor{display:inline-block;width:9px;height:1.1em;background:var(--cyan);vertical-align:-2px;margin-left:4px;animation:blink .9s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .hero p.desc{color:var(--muted);max-width:520px;font-size:16.5px;margin-bottom:32px;}
+  .hero-status{
+    display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12.5px;color:var(--amber);
+    border:1px dashed rgba(255,176,32,.4);padding:8px 14px;border-radius:8px;margin-bottom:34px;
+  }
+  .hero-status::before{content:"▶";font-size:10px;color:var(--amber);}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:14px;}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:10px;
+    font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.04em;transition:transform .18s var(--ease),box-shadow .18s,background .18s,border-color .18s;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:linear-gradient(135deg,var(--cyan),#38c6e0);color:#041018;box-shadow:var(--glow-cyan);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 26px rgba(77,243,255,.5);}
+  .btn-ghost{border:1px solid var(--line);color:var(--text);background:var(--bg-2);}
+  .btn-ghost:hover{border-color:var(--pink);box-shadow:var(--glow-pink);transform:translateY(-2px);}
+  .btn svg{width:16px;height:16px;}
+
+  /* hero console card */
+  .console-card{
+    position:relative;border:1px solid var(--line);border-radius:var(--radius);
+    background:linear-gradient(180deg,var(--bg-2),var(--bg-1));overflow:hidden;
+    box-shadow:0 30px 80px -30px rgba(0,0,0,.8);
+  }
+  .console-card::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(400px 240px at 80% -10%, rgba(255,61,139,.12), transparent 60%);
+  }
+  .console-head{
+    display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em;
+  }
+  .console-head .t-dot{width:10px;height:10px;border-radius:50%;}
+  .console-head .t-dot.r{background:var(--red);}
+  .console-head .t-dot.y{background:var(--amber);}
+  .console-head .t-dot.g{background:var(--lime);}
+  .console-body{padding:22px 20px;font-family:var(--mono);font-size:13px;line-height:1.9;color:var(--muted);}
+  .console-body .ln{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .console-body .ln b{color:var(--text);font-weight:500;}
+  .console-body .prompt{color:var(--lime);}
+  .console-body .ok{color:var(--cyan);}
+  .console-body .warn{color:var(--amber);}
+  .console-foot{display:flex;gap:8px;padding:14px 16px;border-top:1px solid var(--line-soft);}
+  .mini-stat{
+    flex:1;border:1px solid var(--line-soft);border-radius:9px;padding:10px 12px;
+    background:rgba(255,255,255,.02);
+  }
+  .mini-stat .v{font-family:var(--mono);font-size:20px;font-weight:800;color:var(--text);}
+  .mini-stat .v span{color:var(--cyan);font-size:13px;}
+  .mini-stat .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted-2);text-transform:uppercase;margin-top:2px;}
+
+  /* ---------- games ---------- */
+  .games-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;}
+  .game-card{
+    position:relative;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+    background:var(--bg-1);transition:transform .3s var(--ease),border-color .3s,box-shadow .3s;
+  }
+  .game-card:hover{transform:translateY(-6px);border-color:rgba(77,243,255,.5);box-shadow:0 26px 60px -30px rgba(0,0,0,.9),var(--glow-cyan);}
+  .cover{position:relative;aspect-ratio:16/9;overflow:hidden;display:grid;place-items:center;}
+  .cover .pixel{position:absolute;inset:0;opacity:.9;}
+  .cover-sea{
+    background:
+      radial-gradient(1.5px 1.5px at 20% 30%, #fff, transparent 40%),
+      radial-gradient(1.2px 1.2px at 68% 22%, #fff, transparent 40%),
+      radial-gradient(1.8px 1.8px at 44% 62%, #cfefff, transparent 40%),
+      radial-gradient(1px 1px at 82% 70%, #fff, transparent 40%),
+      radial-gradient(1.4px 1.4px at 12% 78%, #9ff, transparent 40%),
+      radial-gradient(1.1px 1.1px at 56% 40%, #fff, transparent 40%),
+      radial-gradient(1.3px 1.3px at 90% 40%, #fff, transparent 40%),
+      radial-gradient(1.6px 1.6px at 33% 14%, #fff, transparent 40%),
+      linear-gradient(140deg,#0b1230 0%,#1b1e5c 38%,#0f3d6b 60%,#0a2b4a 100%);
+    background-size:auto,auto,auto,auto,auto,auto,auto,auto,100% 100%;
+    background-repeat:repeat,repeat,repeat,repeat,repeat,repeat,repeat,repeat,no-repeat;
+  }
+  .cover-sea::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:45%;
+    background:linear-gradient(180deg,transparent,rgba(5,7,12,.88));
+  }
+  .cover-farm{
+    background:
+      linear-gradient(180deg,#274a2e 0%,#3d6b35 45%,#5b7f3a 60%,#2c4a2b 100%);
+  }
+  .cover-farm::before{
+    content:"";position:absolute;inset:0;
+    background:
+      repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 8px,transparent 8px 32px),
+      repeating-linear-gradient(0deg,rgba(0,0,0,.06) 0 6px,transparent 6px 24px);
+  }
+  .cover-farm::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:45%;
+    background:linear-gradient(180deg,transparent,rgba(5,7,12,.9));
+  }
+  .cover .cover-title{
+    position:relative;z-index:2;text-align:center;
+    font-family:var(--mono);font-weight:800;font-size:clamp(22px,3.4vw,34px);
+    letter-spacing:.05em;color:#fff;text-shadow:0 4px 24px rgba(0,0,0,.6),0 0 30px rgba(77,243,255,.5);
+    padding:0 16px;
+  }
+  .cover .cover-sub{
+    position:relative;z-index:2;text-align:center;font-family:var(--mono);font-size:11px;
+    letter-spacing:.3em;text-transform:uppercase;color:var(--lime);margin-top:6px;
+  }
+  .cover .corner{position:absolute;width:20px;height:20px;border:2px solid var(--cyan);z-index:3;opacity:.8;}
+  .cover .corner.tl{top:12px;left:12px;border-right:none;border-bottom:none;}
+  .cover .corner.tr{top:12px;right:12px;border-left:none;border-bottom:none;}
+  .cover .corner.bl{bottom:12px;left:12px;border-right:none;border-top:none;}
+  .cover .corner.br{bottom:12px;right:12px;border-left:none;border-top:none;}
+  .game-body{padding:22px;}
+  .game-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+  .game-title{font-family:var(--mono);font-size:20px;font-weight:800;letter-spacing:.01em;}
+  .badge{
+    font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:4px 10px;border-radius:6px;
+  }
+  .badge-year{background:var(--bg-3);color:var(--muted);border:1px solid var(--line-soft);}
+  .badge-rate{background:rgba(182,255,46,.1);color:var(--lime);border:1px solid rgba(182,255,46,.35);}
+  .badge-genre{background:rgba(77,243,255,.08);color:var(--cyan);border:1px solid rgba(77,243,255,.3);}
+  .game-desc{color:var(--muted);font-size:14.5px;margin-bottom:20px;min-height:52px;}
+  .game-actions{display:flex;flex-wrap:wrap;gap:12px;}
+  .game-actions .btn{font-size:13px;padding:11px 18px;}
+  .btn-steam{background:linear-gradient(135deg,#2a475e,#171a21);color:#c7d5e0;border:1px solid #3b5a78;}
+  .btn-steam:hover{border-color:#66c0f4;box-shadow:0 0 18px rgba(102,192,244,.3);transform:translateY(-2px);}
+  .btn-demo{border:1px solid var(--lime);color:var(--lime);background:rgba(182,255,46,.06);}
+  .btn-demo:hover{background:rgba(182,255,46,.12);box-shadow:var(--glow-lime);transform:translateY(-2px);}
+
+  /* ---------- game jam ---------- */
+  .jam-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .jam-card{
+    position:relative;border:1px solid var(--line);border-radius:var(--radius);padding:24px;
+    background:linear-gradient(180deg,var(--bg-2),var(--bg-1));
+    transition:transform .3s var(--ease),border-color .3s;
+    overflow:hidden;
+  }
+  .jam-card:hover{transform:translateY(-5px);border-color:var(--purple);}
+  .jam-card::after{
+    content:attr(data-idx);position:absolute;right:12px;top:6px;font-family:var(--mono);
+    font-size:54px;font-weight:800;color:rgba(157,107,255,.1);line-height:1;pointer-events:none;
+  }
+  .jam-event{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--purple);text-transform:uppercase;margin-bottom:10px;}
+  .jam-title{font-family:var(--mono);font-size:19px;font-weight:800;margin-bottom:4px;}
+  .jam-sub{font-family:var(--mono);font-size:12px;color:var(--muted-2);letter-spacing:.06em;margin-bottom:12px;}
+  .jam-desc{color:var(--muted);font-size:14px;margin-bottom:16px;min-height:66px;}
+  .jam-tag{
+    display:inline-block;font-family:var(--mono);font-size:11px;padding:5px 11px;border-radius:6px;
+    background:rgba(255,61,139,.08);color:var(--pink);border:1px solid rgba(255,61,139,.3);
+  }
+
+  /* ---------- blog ---------- */
+  .blog-list{border-top:1px solid var(--line);}
+  .blog-item{
+    display:grid;grid-template-columns:110px 1fr auto;gap:24px;align-items:baseline;
+    padding:26px 8px;border-bottom:1px solid var(--line);transition:background .2s,padding-left .2s;
+  }
+  .blog-item:hover{background:rgba(77,243,255,.03);padding-left:18px;}
+  .blog-date{font-family:var(--mono);font-size:13px;color:var(--cyan);letter-spacing:.06em;}
+  .blog-info h3{font-size:18px;font-weight:700;margin-bottom:6px;transition:color .2s;}
+  .blog-item:hover h3{color:var(--cyan);}
+  .blog-info p{color:var(--muted);font-size:14px;max-width:640px;}
+  .blog-arrow{font-family:var(--mono);color:var(--muted-2);font-size:18px;transition:transform .2s,color .2s;}
+  .blog-item:hover .blog-arrow{transform:translateX(6px);color:var(--cyan);}
+
+  /* ---------- video ---------- */
+  .video-shell{
+    position:relative;aspect-ratio:16/9;max-width:860px;margin:0 auto;border:1px solid var(--line);
+    border-radius:var(--radius);overflow:hidden;background:linear-gradient(160deg,#0d1120,#0a0714);
+    display:grid;place-items:center;text-align:center;
+  }
+  .video-shell::before{
+    content:"";position:absolute;inset:0;
+    background:
+      repeating-linear-gradient(90deg,rgba(77,243,255,.04) 0 1px,transparent 1px 24px),
+      repeating-linear-gradient(0deg,rgba(77,243,255,.04) 0 1px,transparent 1px 24px);
+  }
+  .video-inner{position:relative;z-index:2;padding:30px;}
+  .play-btn{
+    width:82px;height:82px;margin:0 auto 22px;border-radius:50%;
+    border:2px solid var(--cyan);display:grid;place-items:center;color:var(--cyan);
+    background:rgba(77,243,255,.06);box-shadow:var(--glow-cyan);
+    transition:transform .25s var(--ease),background .25s,box-shadow .25s;
+  }
+  .play-btn:hover{transform:scale(1.08);background:rgba(77,243,255,.16);box-shadow:0 0 34px rgba(77,243,255,.6);}
+  .play-btn svg{width:28px;height:28px;margin-left:4px;}
+  .video-label{font-family:var(--mono);font-size:22px;font-weight:800;letter-spacing:.04em;}
+  .video-sub{font-family:var(--mono);font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+  .video-meta{font-family:var(--mono);font-size:12px;color:var(--muted-2);margin-top:16px;}
+
+  /* ---------- stack ---------- */
+  .stack-wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;}
+  .chip{
+    display:inline-flex;align-items:center;gap:9px;padding:12px 20px;border-radius:11px;
+    border:1px solid var(--line);background:var(--bg-1);font-family:var(--mono);font-size:14px;
+    transition:transform .22s var(--ease),border-color .22s,box-shadow .22s;
+  }
+  .chip:hover{transform:translateY(-4px) rotate(-1deg);border-color:var(--cyan);box-shadow:var(--glow-cyan);}
+  .chip i{width:8px;height:8px;border-radius:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
+  .chip:nth-child(2n) i{background:var(--pink);box-shadow:0 0 8px var(--pink);}
+  .chip:nth-child(3n) i{background:var(--lime);box-shadow:0 0 8px var(--lime);}
+  .chip:nth-child(4n) i{background:var(--purple);box-shadow:0 0 8px var(--purple);}
+
+  /* ---------- contact ---------- */
+  .contact-panel{
+    border:1px solid var(--line);border-radius:var(--radius);padding:clamp(26px,4vw,44px);
+    background:linear-gradient(180deg,var(--bg-2),var(--bg-1));position:relative;overflow:hidden;
+  }
+  .contact-panel::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+    background:linear-gradient(180deg,var(--cyan),var(--pink),var(--lime));
+  }
+  .contact-panel h3{font-family:var(--mono);font-size:24px;font-weight:800;margin-bottom:10px;}
+  .contact-panel p{color:var(--muted);max-width:540px;margin-bottom:28px;font-size:15px;}
+  .social-row{display:flex;flex-wrap:wrap;gap:14px;}
+  .social-link{
+    display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:10px;
+    border:1px solid var(--line);background:var(--bg-0);font-family:var(--mono);font-size:13.5px;
+    color:var(--text);transition:transform .22s var(--ease),border-color .22s,box-shadow .22s;
+  }
+  .social-link svg{width:18px;height:18px;}
+  .social-link:hover{transform:translateY(-3px);border-color:var(--pink);box-shadow:var(--glow-pink);}
+  .social-link .handle{color:var(--muted-2);font-size:12px;}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--line);padding:40px 0 56px;margin-top:60px;text-align:center;
+    font-family:var(--mono);color:var(--muted-2);font-size:13px;letter-spacing:.05em;
+  }
+  footer .f-logo{font-size:22px;font-weight:800;color:var(--text);margin-bottom:8px;letter-spacing:.1em;}
+  footer .f-logo span{color:var(--cyan);}
+  footer .f-tagline{color:var(--muted);margin-bottom:14px;}
+  footer .f-copy{font-size:12px;}
+  .back-top{
+    position:fixed;right:22px;bottom:22px;z-index:90;width:44px;height:44px;border-radius:11px;
+    border:1px solid var(--line);background:var(--bg-2);color:var(--cyan);display:grid;place-items:center;
+    opacity:0;visibility:hidden;transform:translateY(10px);transition:.3s var(--ease);
+  }
+  .back-top.show{opacity:1;visibility:visible;transform:translateY(0);}
+  .back-top:hover{border-color:var(--cyan);box-shadow:var(--glow-cyan);}
+  .back-top svg{width:18px;height:18px;}
+
+  /* ---------- reveal ---------- */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:var(--d,0s);}
+  .reveal.in-view{opacity:1;transform:none;}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:960px){
+    .hero-grid{grid-template-columns:1fr;gap:34px;}
+    .console-card{max-width:560px;}
+    .games-grid{grid-template-columns:1fr;}
+    .jam-grid{grid-template-columns:1fr;}
+    .blog-item{grid-template-columns:1fr;gap:6px;}
+    nav.menu{
+      position:fixed;top:var(--nav-h);left:0;right:0;flex-direction:column;align-items:stretch;
+      background:rgba(5,7,12,.97);border-bottom:1px solid var(--line);padding:12px 18px 20px;
+      transform:translateY(-8px);opacity:0;visibility:hidden;transition:.25s var(--ease);gap:2px;
+    }
+    nav.menu.open{transform:none;opacity:1;visibility:visible;}
+    nav.menu a{padding:13px 12px;font-size:14px;}
+    .menu-toggle{display:grid;}
+    body.menu-locked{overflow:hidden;}
+  }
+  @media (max-width:560px){
+    .hero h1{font-size:44px;}
+    .brand .tag{display:none;}
+    .game-actions .btn{flex:1;justify-content:center;}
+    .social-row{flex-direction:column;}
+    .social-link{justify-content:flex-start;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;}
+    .reveal{opacity:1;transform:none;}
+  }
+</style>
+</head>
+<body>
+  <div class="bg-scene" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div id="bootbar" aria-hidden="true"></div>
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+
+  <header>
+    <a class="brand" href="#top" aria-label="home">
+      <span class="logo">Y</span>
+      <span>YIZHOU.LIN<span class="tag">_dev</span></span>
+    </a>
+    <nav class="menu" id="menu" aria-label="主导航">
+      <a href="#home" data-i18n="nav_home">首页</a>
+      <a href="#games" data-i18n="nav_games">游戏</a>
+      <a href="#jam" data-i18n="nav_jam">原型</a>
+      <a href="#blog" data-i18n="nav_blog">博客</a>
+      <a href="#video" data-i18n="nav_video">视频</a>
+      <a href="#stack" data-i18n="nav_stack">技术栈</a>
+      <a href="#contact" data-i18n="nav_contact">联系</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="lang-btn" id="langBtn" aria-label="切换语言 / Switch language">
+        <span class="globe"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.9 5.6 3.9 9s-1.4 6.4-3.9 9c-2.5-2.6-3.9-5.6-3.9-9s1.4-6.4 3.9-9z"/></svg></span>
+        <span class="lang-label" id="langLabel">EN</span>
+      </button>
+      <button class="menu-toggle" id="menuToggle" aria-label="菜单 / Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <span class="hero-kicker"><span class="dot"></span> INDIE GAME DEVELOPER</span>
+            <h1>
+              <span class="latin">LIN YIZHOU</span>
+              <span data-i18n="hero_name">林一舟</span>
+            </h1>
+            <div class="role"><span data-i18n="hero_role">独立游戏开发者</span><span class="cursor"></span></div>
+            <p class="desc" data-i18n="hero_desc">你好，我是一名独立游戏开发者。我相信好游戏源于好奇心与手艺：从代码、像素到音效，一个人完成从原型到上架的全过程。这里是我的一部分作品与思考。</p>
+            <div class="hero-status" data-i18n="hero_status">正在开发 · 星海远征 DLC《深空信号》</div>
+            <div class="hero-cta">
+              <a class="btn btn-primary" href="https://github.com/yourname" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.66.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+                <span data-i18n="hero_github">在 GitHub 上查看我的代码</span>
+              </a>
+              <a class="btn btn-ghost" href="#games">
+                <span data-i18n="hero_cta">查看我的游戏</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="console-card" aria-label="开发者状态终端">
+            <div class="console-head">
+              <span class="t-dot r"></span><span class="t-dot y"></span><span class="t-dot g"></span>
+              <span style="margin-left:6px;">dev@yizhou — portfolio</span>
+            </div>
+            <div class="console-body">
+              <div class="ln"><span class="prompt">$</span> <b>whoami</b></div>
+              <div class="ln ok">→ indie game developer / solo dev</div>
+              <div class="ln" style="margin-top:8px;"><span class="prompt">$</span> <b>ls ./games</b></div>
+              <div class="ln ok">→ star_ocean_expedition   pixel_farm</div>
+              <div class="ln" style="margin-top:8px;"><span class="prompt">$</span> <b>./build --status</b></div>
+              <div class="ln warn">→ 2 games shipped · 3 prototypes</div>
+              <div class="ln" style="margin-top:8px;"><span class="prompt">$</span> <b>echo $NOW_PLAYING</b></div>
+              <div class="ln ok">→ <span data-i18n="console_now">星海远征 DLC「深空信号」</span></div>
+            </div>
+            <div class="console-foot">
+              <div class="mini-stat"><div class="v">2<span>+</span></div><div class="k" data-i18n="stat_games">已发售游戏</div></div>
+              <div class="mini-stat"><div class="v">90<span>%</span></div><div class="k" data-i18n="stat_rate">平均好评率</div></div>
+              <div class="mini-stat"><div class="v">5<span>+</span></div><div class="k" data-i18n="stat_years">年开发经验</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAMES -->
+    <section id="games">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="num">01 // GAMES</div>
+          <h2><span data-i18n="sec_games">游戏作品</span> <span class="accent">_</span></h2>
+          <p class="sub" data-i18n="sec_games_sub">两款已在 Steam 发售的游戏，从玩法、美术到商店页都独立完成。</p>
+        </div>
+        <div class="games-grid">
+          <!-- game 1 -->
+          <article class="game-card reveal" style="--d:.05s">
+            <div class="cover cover-sea">
+              <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+              <div>
+                <div class="cover-title" data-i18n="game1_title">星海远征</div>
+                <div class="cover-sub">STAR OCEAN EXPEDITION</div>
+              </div>
+            </div>
+            <div class="game-body">
+              <div class="game-meta">
+                <h3 class="game-title" data-i18n="game1_title">星海远征</h3>
+                <span class="badge badge-year">2024</span>
+                <span class="badge badge-rate" data-i18n="game1_rate">Steam 好评率 92%</span>
+              </div>
+              <p class="game-desc" data-i18n="game1_desc">驾驶深空飞船穿越随机生成的星域，在燃料、护盾与未知遗迹之间做出抉择。每一次跃迁都是一次全新的航线。</p>
+              <div class="game-actions">
+                <a class="btn btn-steam" href="#" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.98 2C6.46 2 2 6.46 2 11.98S6.46 21.96 11.98 21.96 21.96 17.5 21.96 11.98 17.5 2 11.98 2zm4.28 7.96 2.66 1.88c.34.24.44.72.2 1.06l-1.92 2.7v2.86l-9.32 5.32c-.6.35-1.38.14-1.73-.47L3.1 17.4l3.98-3.04-1.3-3.82 6.06-4.38 2.94.56a1 1 0 0 1 .72 1.64l.46 1.6zm-3.32-2.2L9.3 9.94l1.02 3.06 2.62-5.24zm1.18 4.34-2.5 5.02 1.58-.04.92-1.3v-3.68zm2.28-.3-1.12 2.24 2.3.02.4-.56-1.58-1.7z"/></svg>
+                  <span data-i18n="btn_steam">Steam 商店</span>
+                </a>
+                <a class="btn btn-demo" href="#" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                  <span data-i18n="btn_demo">试玩 Demo</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- game 2 -->
+          <article class="game-card reveal" style="--d:.15s">
+            <div class="cover cover-farm">
+              <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+              <div>
+                <div class="cover-title" data-i18n="game2_title">像素农场</div>
+                <div class="cover-sub">PIXEL FARM</div>
+              </div>
+            </div>
+            <div class="game-body">
+              <div class="game-meta">
+                <h3 class="game-title" data-i18n="game2_title">像素农场</h3>
+                <span class="badge badge-year">2025</span>
+                <span class="badge badge-rate" data-i18n="game2_rate">Steam 好评率 88%</span>
+              </div>
+              <p class="game-desc" data-i18n="game2_desc">经营一座属于自己的像素农场：耕种、养殖、建造，把荒地变成温暖的小镇。轻松治愈，也藏着策略的深度。</p>
+              <div class="game-actions">
+                <a class="btn btn-steam" href="#" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.98 2C6.46 2 2 6.46 2 11.98S6.46 21.96 11.98 21.96 21.96 17.5 21.96 11.98 17.5 2 11.98 2zm4.28 7.96 2.66 1.88c.34.24.44.72.2 1.06l-1.92 2.7v2.86l-9.32 5.32c-.6.35-1.38.14-1.73-.47L3.1 17.4l3.98-3.04-1.3-3.82 6.06-4.38 2.94.56a1 1 0 0 1 .72 1.64l.46 1.6zm-3.32-2.2L9.3 9.94l1.02 3.06 2.62-5.24zm1.18 4.34-2.5 5.02 1.58-.04.92-1.3v-3.68zm2.28-.3-1.12 2.24 2.3.02.4-.56-1.58-1.7z"/></svg>
+                  <span data-i18n="btn_steam">Steam 商店</span>
+                </a>
+                <a class="btn btn-demo" href="#" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                  <span data-i18n="btn_demo">试玩 Demo</span>
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAME JAM -->
+    <section id="jam">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="num">02 // GAME JAM</div>
+          <h2><span data-i18n="sec_jam">Game Jam 原型</span> <span class="accent">_</span></h2>
+          <p class="sub" data-i18n="sec_jam_sub">48 小时与限时挑战的产物 —— 快速迭代、大胆试错，把想法压进最小的可玩版本。</p>
+        </div>
+        <div class="jam-grid">
+          <article class="jam-card reveal" data-idx="01" style="--d:.05s">
+            <div class="jam-event">2024 GLOBAL GAME JAM</div>
+            <h3 class="jam-title" data-i18n="jam1_title">时间循环</h3>
+            <div class="jam-sub">TIME LOOP</div>
+            <p class="jam-desc" data-i18n="jam1_desc">在同一个 24 小时里循环，寻找打破时间闭环的唯一线索。48 小时内完成从概念到可玩版本。</p>
+            <span class="jam-tag" data-i18n="jam1_tag">48 小时限时</span>
+          </article>
+          <article class="jam-card reveal" data-idx="02" style="--d:.15s">
+            <div class="jam-event">2025 LUDUM DARE</div>
+            <h3 class="jam-title" data-i18n="jam2_title">影子</h3>
+            <div class="jam-sub">SHADOW</div>
+            <p class="jam-desc" data-i18n="jam2_desc">光与影的谜题：只有当你变成影子，才能穿过真实的墙。围绕「影子」主题的一次极简设计实验。</p>
+            <span class="jam-tag" data-i18n="jam2_tag">主题「影子」</span>
+          </article>
+          <article class="jam-card reveal" data-idx="03" style="--d:.25s">
+            <div class="jam-event">2026 INDIE DEV CONTEST</div>
+            <h3 class="jam-title" data-i18n="jam3_title">重力反转</h3>
+            <div class="jam-sub">GRAVITY</div>
+            <p class="jam-desc" data-i18n="jam3_desc">反转重力，改变世界的方向。基于物理玩法，用重力切换解开关卡谜题。</p>
+            <span class="jam-tag" data-i18n="jam3_tag">物理玩法</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOG -->
+    <section id="blog">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="num">03 // BLOG</div>
+          <h2><span data-i18n="sec_blog">技术博客</span> <span class="accent">_</span></h2>
+          <p class="sub" data-i18n="sec_blog_sub">记录开发路上的踩坑、工具选择与算法实现。</p>
+        </div>
+        <div class="blog-list reveal">
+          <a class="blog-item" href="#">
+            <span class="blog-date">2026-06</span>
+            <div class="blog-info">
+              <h3 data-i18n="blog1_title">Unity 到 Godot 的迁移之路</h3>
+              <p data-i18n="blog1_desc">从熟悉的 Unity 转向开源引擎 Godot：工具链、GDScript 上手体验，以及迁移中踩过的坑。</p>
+            </div>
+            <span class="blog-arrow">→</span>
+          </a>
+          <a class="blog-item" href="#">
+            <span class="blog-date">2026-04</span>
+            <div class="blog-info">
+              <h3 data-i18n="blog2_title">独立游戏如何做 Steam 商店优化</h3>
+              <p data-i18n="blog2_desc">标签、截图、宣传片与愿望单：聊聊独立游戏如何用有限的资源做好 Steam 商店页优化。</p>
+            </div>
+            <span class="blog-arrow">→</span>
+          </a>
+          <a class="blog-item" href="#">
+            <span class="blog-date">2026-02</span>
+            <div class="blog-info">
+              <h3 data-i18n="blog3_title">Roguelike 随机地图生成算法</h3>
+              <p data-i18n="blog3_desc">从噪声到房间：拆解 Roguelike 随机地图的常见生成算法与可玩性平衡。</p>
+            </div>
+            <span class="blog-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIDEO -->
+    <section id="video">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="num">04 // DEVLOG</div>
+          <h2><span data-i18n="sec_video">视频</span> <span class="accent">_</span></h2>
+          <p class="sub" data-i18n="sec_video_sub">不定期更新的开发日志，记录从灵感到成品的真实过程。</p>
+        </div>
+        <div class="video-shell reveal">
+          <div class="video-inner">
+            <button class="play-btn" aria-label="播放开发日志视频">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <div class="video-label" data-i18n="video_label">开发日志视频</div>
+            <div class="video-sub">DEV LOG · EPISODE 01</div>
+            <div class="video-meta" data-i18n="video_meta">[ 视频占位 · 播放器即将接入 ]</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STACK -->
+    <section id="stack">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="num">05 // TECH STACK</div>
+          <h2><span data-i18n="sec_stack">技术栈</span> <span class="accent">_</span></h2>
+          <p class="sub" data-i18n="sec_stack_sub">每天打交道的一套工具，从引擎、语言到音频与发行。</p>
+        </div>
+        <div class="stack-wrap reveal">
+          <span class="chip"><i></i>Unity</span>
+          <span class="chip"><i></i>Godot</span>
+          <span class="chip"><i></i>C#</span>
+          <span class="chip"><i></i>GDScript</span>
+          <span class="chip"><i></i>Blender</span>
+          <span class="chip"><i></i>Aseprite</span>
+          <span class="chip"><i></i>FMOD</span>
+          <span class="chip"><i></i>Steamworks</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="num">06 // CONTACT</div>
+          <h2><span data-i18n="sec_contact">联系 / 社交</span> <span class="accent">_</span></h2>
+        </div>
+        <div class="contact-panel reveal">
+          <h3 data-i18n="contact_title">想一起做游戏？</h3>
+          <p data-i18n="contact_note">想一起做游戏、聊聊独立开发，或只是想打个招呼？欢迎通过以下方式找到我。</p>
+          <div class="social-row">
+            <a class="social-link" href="https://github.com/yourname" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.66.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+              <span>GitHub</span><span class="handle">@yourname</span>
+            </a>
+            <a class="social-link" href="#" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 1.2h3.7l-8.1 9.2L24 22.8h-7.4l-5.8-7.6-6.7 7.6H.4l8.6-9.9L0 1.2h7.6l5.3 7 6-7zm-1.3 19.4h2L6.5 3.3h-2.2l13.3 17.3z"/></svg>
+              <span>Twitter / X</span><span class="handle">@yourname</span>
+            </a>
+            <a class="social-link" href="https://yourname.itch.io" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.1 0C1.9 0 .8.9.6 2.1L0 5.2c0 .1 0 .2.1.3L2 13.6c.1.6.7 1.1 1.3 1.1h1.6c.4 0 .8-.2 1-.6l2-3.4c.3-.5.9-.5 1.2 0l2 3.4c.2.4.6.6 1 .6h1.6c.6 0 1.2-.5 1.3-1.1l1.9-8.1c0-.1.1-.2.1-.3L21.4 2.1c-.2-1.2-1.2-2.1-2.4-2.1H3.1zm2.1 5.4c-.7 0-1.2-.5-1.2-1.2S4.5 3 5.2 3s1.2.5 1.2 1.2-.5 1.2-1.2 1.2zm4.5 0c-.7 0-1.2-.5-1.2-1.2S9 3 9.7 3s1.2.5 1.2 1.2-.5 1.2-1.2 1.2zm4.5 0c-.7 0-1.2-.5-1.2-1.2S13.5 3 14.2 3s1.2.5 1.2 1.2-.5 1.2-1.2 1.2zm4.5 0c-.7 0-1.2-.5-1.2-1.2S18 3 18.7 3s1.2.5 1.2 1.2-.5 1.2-1.2 1.2z"/></svg>
+              <span>itch.io</span><span class="handle">@yourname</span>
+            </a>
+            <a class="social-link" href="#" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.8 3H6.2C4 3 2.2 4.8 2.2 7v4.2c0 2.2 1.8 4 4 4H8v2.2c0 .4.5.7.8.4l2.4-2.6h6.6c2.2 0 4-1.8 4-4V7c0-2.2-1.8-4-4-4zM8 9.4c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm4 0c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm4 0c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z"/></svg>
+              <span>Bilibili</span><span class="handle">@yourname</span>
+            </a>
+            <a class="social-link" href="mailto:you@example.com">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg>
+              <span>Email</span><span class="handle">you@example.com</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="f-logo">YIZHOU<span>.LIN</span></div>
+    <div class="f-tagline" data-i18n="footer_tagline">用代码与像素造梦</div>
+    <div class="f-copy">© 2026 <span data-i18n="footer_name">林一舟</span> · <span data-i18n="footer_role">独立游戏开发者</span> · <span data-i18n="footer_rights">保留所有权利</span></div>
+  </footer>
+
+  <button class="back-top" id="backTop" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+<script>
+(function(){
+  "use strict";
+
+  var I18N = {
+    zh: {
+      nav_home: "首页", nav_games: "游戏", nav_jam: "原型", nav_blog: "博客",
+      nav_video: "视频", nav_stack: "技术栈", nav_contact: "联系",
+      hero_name: "林一舟", hero_role: "独立游戏开发者",
+      hero_desc: "你好，我是一名独立游戏开发者。我相信好游戏源于好奇心与手艺：从代码、像素到音效，一个人完成从原型到上架的全过程。这里是我的一部分作品与思考。",
+      hero_status: "正在开发 · 星海远征 DLC《深空信号》",
+      hero_github: "在 GitHub 上查看我的代码", hero_cta: "查看我的游戏",
+      console_now: "星海远征 DLC「深空信号」",
+      stat_games: "已发售游戏", stat_rate: "平均好评率", stat_years: "年开发经验",
+      sec_games: "游戏作品", sec_games_sub: "两款已在 Steam 发售的游戏，从玩法、美术到商店页都独立完成。",
+      sec_jam: "Game Jam 原型", sec_jam_sub: "48 小时与限时挑战的产物 —— 快速迭代、大胆试错，把想法压进最小的可玩版本。",
+      sec_blog: "技术博客", sec_blog_sub: "记录开发路上的踩坑、工具选择与算法实现。",
+      sec_video: "视频", sec_video_sub: "不定期更新的开发日志，记录从灵感到成品的真实过程。",
+      sec_stack: "技术栈", sec_stack_sub: "每天打交道的一套工具，从引擎、语言到音频与发行。",
+      sec_contact: "联系 / 社交",
+      game1_title: "星海远征", game1_rate: "Steam 好评率 92%",
+      game1_desc: "驾驶深空飞船穿越随机生成的星域，在燃料、护盾与未知遗迹之间做出抉择。每一次跃迁都是一次全新的航线。",
+      game2_title: "像素农场", game2_rate: "Steam 好评率 88%",
+      game2_desc: "经营一座属于自己的像素农场：耕种、养殖、建造，把荒地变成温暖的小镇。轻松治愈，也藏着策略的深度。",
+      btn_steam: "Steam 商店", btn_demo: "试玩 Demo",
+      jam1_title: "时间循环", jam1_desc: "在同一个 24 小时里循环，寻找打破时间闭环的唯一线索。48 小时内完成从概念到可玩版本。", jam1_tag: "48 小时限时",
+      jam2_title: "影子", jam2_desc: "光与影的谜题：只有当你变成影子，才能穿过真实的墙。围绕「影子」主题的一次极简设计实验。", jam2_tag: "主题「影子」",
+      jam3_title: "重力反转", jam3_desc: "反转重力，改变世界的方向。基于物理玩法，用重力切换解开关卡谜题。", jam3_tag: "物理玩法",
+      blog1_title: "Unity 到 Godot 的迁移之路", blog1_desc: "从熟悉的 Unity 转向开源引擎 Godot：工具链、GDScript 上手体验，以及迁移中踩过的坑。",
+      blog2_title: "独立游戏如何做 Steam 商店优化", blog2_desc: "标签、截图、宣传片与愿望单：聊聊独立游戏如何用有限的资源做好 Steam 商店页优化。",
+      blog3_title: "Roguelike 随机地图生成算法", blog3_desc: "从噪声到房间：拆解 Roguelike 随机地图的常见生成算法与可玩性平衡。",
+      video_label: "开发日志视频", video_meta: "[ 视频占位 · 播放器即将接入 ]",
+      contact_title: "想一起做游戏？",
+      contact_note: "想一起做游戏、聊聊独立开发，或只是想打个招呼？欢迎通过以下方式找到我。",
+      footer_tagline: "用代码与像素造梦", footer_name: "林一舟", footer_role: "独立游戏开发者", footer_rights: "保留所有权利"
+    },
+    en: {
+      nav_home: "Home", nav_games: "Games", nav_jam: "Jams", nav_blog: "Blog",
+      nav_video: "Videos", nav_stack: "Stack", nav_contact: "Contact",
+      hero_name: "Yizhou Lin", hero_role: "Indie Game Developer",
+      hero_desc: "Hi, I'm an indie game developer. I believe great games come from curiosity and craft — code, pixels and sound, built from prototype to release mostly on my own. Here are some of my games and thoughts.",
+      hero_status: "Now developing · Star Ocean Expedition DLC 'Deep Signal'",
+      hero_github: "View my code on GitHub", hero_cta: "View my games",
+      console_now: "Star Ocean Expedition DLC 'Deep Signal'",
+      stat_games: "Games shipped", stat_rate: "Avg. rating", stat_years: "Years of dev",
+      sec_games: "Games", sec_games_sub: "Two games released on Steam — design, art and store page all made solo.",
+      sec_jam: "Game Jam Prototypes", sec_jam_sub: "Born from 48-hour and time-limited challenges — fast iteration, bold experiments, ideas compressed into the smallest playable builds.",
+      sec_blog: "Tech Blog", sec_blog_sub: "Notes on pitfalls, tooling choices and algorithm implementation along the way.",
+      sec_video: "Videos", sec_video_sub: "Irregular dev logs recording the real journey from idea to finished game.",
+      sec_stack: "Tech Stack", sec_stack_sub: "The tools I work with every day, from engines and languages to audio and publishing.",
+      sec_contact: "Contact / Social",
+      game1_title: "Star Ocean Expedition", game1_rate: "Steam rating 92%",
+      game1_desc: "Pilot a deep-space ship through procedurally generated starfields, choosing between fuel, shields and unknown ruins. Every jump is a brand-new route.",
+      game2_title: "Pixel Farm", game2_rate: "Steam rating 88%",
+      game2_desc: "Run your own pixel farm: grow, raise, build, and turn wasteland into a cozy town. Relaxing yet quietly strategic.",
+      btn_steam: "Steam Store", btn_demo: "Play Demo",
+      jam1_title: "Time Loop", jam1_desc: "Loop the same 24 hours to find the one clue that breaks the cycle. From concept to playable in 48 hours.", jam1_tag: "48-hour build",
+      jam2_title: "Shadow", jam2_desc: "A puzzle of light and shadow: only by becoming a shadow can you pass through real walls. A minimalist experiment around 'Shadow'.", jam2_tag: "Theme: Shadow",
+      jam3_title: "Gravity", jam3_desc: "Flip gravity and change the direction of the world. A physics-driven game of gravity-switching puzzles.", jam3_tag: "Physics gameplay",
+      blog1_title: "Migrating from Unity to Godot", blog1_desc: "Moving from Unity to the open-source Godot engine: tooling, first impressions of GDScript, and the pitfalls along the way.",
+      blog2_title: "Steam Store Optimization for Indie Games", blog2_desc: "Tags, screenshots, trailers and wishlists: how indie devs can optimize a Steam store page with limited resources.",
+      blog3_title: "Roguelike Procedural Map Generation", blog3_desc: "From noise to rooms: breaking down common procedural map generation algorithms and playability balance.",
+      video_label: "Dev Log Video", video_meta: "[ Video placeholder · Player coming soon ]",
+      contact_title: "Want to make games together?",
+      contact_note: "Want to make games together, talk indie dev, or just say hi? Find me through the links below.",
+      footer_tagline: "Building dreams with code & pixels", footer_name: "Yizhou Lin", footer_role: "Indie Game Developer", footer_rights: "All rights reserved"
+    }
+  };
+
+  var langBtn = document.getElementById('langBtn');
+  var langLabel = document.getElementById('langLabel');
+  var currentLang = localStorage.getItem('yzlang') || 'zh';
+
+  function applyLang(lang){
+    currentLang = lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if (I18N[lang] && I18N[lang][key]) el.textContent = I18N[lang][key];
+    });
+    langLabel.textContent = lang === 'zh' ? 'EN' : '中';
+    localStorage.setItem('yzlang', lang);
+  }
+
+  langBtn.addEventListener('click', function(){
+    applyLang(currentLang === 'zh' ? 'en' : 'zh');
+  });
+
+  applyLang(currentLang);
+
+  // Mobile menu
+  var menu = document.getElementById('menu');
+  var menuToggle = document.getElementById('menuToggle');
+  menuToggle.addEventListener('click', function(){
+    var open = menu.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', String(open));
+    document.body.classList.toggle('menu-locked', open);
+  });
+  menu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      menu.classList.remove('open');
+      document.body.classList.remove('menu-locked');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // Back to top
+  var backTop = document.getElementById('backTop');
+  window.addEventListener('scroll', function(){
+    backTop.classList.toggle('show', window.scrollY > 500);
+  }, {passive:true});
+  backTop.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  // Scroll reveal
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); }
+      });
+    }, {threshold:.12});
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in-view'); });
+  }
+
+  // Boot sequence
+  window.addEventListener('load', function(){
+    document.body.classList.add('booted');
+  });
+
+  // Custom cursor (fine pointers only)
+  if (window.matchMedia('(pointer: fine)').matches){
+    var dot = document.querySelector('.cursor-dot');
+    var ring = document.querySelector('.cursor-ring');
+    var mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', function(e){
+      mx = e.clientX; my = e.clientY;
+      dot.style.transform = 'translate(' + mx + 'px,' + my + 'px)';
+    });
+    (function follow(){
+      rx += (mx - rx) * 0.16;
+      ry += (my - ry) * 0.16;
+      ring.style.transform = 'translate(' + rx + 'px,' + ry + 'px)';
+      requestAnimationFrame(follow);
+    })();
+    var hoverTargets = document.querySelectorAll('a, button, .chip, .game-card, .jam-card, .play-btn');
+    hoverTargets.forEach(function(el){
+      el.addEventListener('mouseenter', function(){ ring.classList.add('is-hover'); });
+      el.addEventListener('mouseleave', function(){ ring.classList.remove('is-hover'); });
+    });
+  }
+})();
+</script>
+</body>
+</html>

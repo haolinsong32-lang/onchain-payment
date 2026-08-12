@@ -1,7 +1,36 @@
-https://suka-pay-shop-r9bd34f6o5-19ur6g709s.preview.iga-pages.com?iga_token=82f9416366e24bf4e56af40929351551&iga_time=1786713877
+# SUKA.net 公网链接（IGA Pages）
 
-联系页面：https://suka-pay-shop-r9bd34f6o5-19ur6g709s.preview.iga-pages.com/contact.html?iga_token=82f9416366e24bf4e56af40929351551&iga_time=1786713877
+> 注意：以下 preview 链接带 token，约 40 小时后过期。如需永久稳定，需绑定自定义域名（见文末）。
 
-自动发货：https://suka-pay-shop-r9bd34f6o5-19ur6g709s.preview.iga-pages.com/delivery.html?iga_token=82f9416366e24bf4e56af40929351551&iga_time=1786713877
+## 最新链接（2026-08-13 部署）
 
-产品页：https://suka-pay-shop-r9bd34f6o5-19ur6g709s.preview.iga-pages.com/products/ai-coding-prompts/index.html?iga_token=82f9416366e24bf4e56af40929351551&iga_time=1786713877
+- 首页：https://suka-pay-shop-r9bd34f6o5-h9uahgk8hz.preview.iga-pages.com?iga_token=002bc44db25add17762c025887e52c10&iga_time=1786736167
+- 联系A老板：https://suka-pay-shop-r9bd34f6o5-h9uahgk8hz.preview.iga-pages.com/contact.html?iga_token=002bc44db25add17762c025887e52c10&iga_time=1786736167
+- 自动发货：https://suka-pay-shop-r9bd34f6o5-h9uahgk8hz.preview.iga-pages.com/delivery.html?iga_token=002bc44db25add17762c025887e52c10&iga_time=1786736167
+- 产品页：https://suka-pay-shop-r9bd34f6o5-h9uahgk8hz.preview.iga-pages.com/products/ai-coding-prompts/index.html?iga_token=002bc44db25add17762c025887e52c10&iga_time=1786736167
+- 备份下载：https://suka-pay-shop-r9bd34f6o5-h9uahgk8hz.preview.iga-pages.com/backup.html?iga_token=002bc44db25add17762c025887e52c10&iga_time=1786736167
+- 作品集：https://suka-pay-shop-r9bd34f6o5-h9uahgk8hz.preview.iga-pages.com/portfolio/index.html?iga_token=002bc44db25add17762c025887e52c10&iga_time=1786736167
+
+## 飞书社区群
+
+入群链接：https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=5fapb619-808a-4ec2-99de-47fc8304afb5
+
+## 联系方式
+
+- 微信：18192939315
+- 邮箱：haolinsong32@gmail.com
+- Telegram：@SUKA_AI_Boss
+
+## 兑换码（共15个）
+
+PROMPT / AI2026 / SUKA20 / A1B2C3 / D4E5F6 / G7H8I9 / J0K1L2 / M3N4O5 / P6Q7R8 / S9T0U1 / V2W3X4 / Y5Z6A7 / B8C9D0 / CODE01 / PAY001
+
+## 如何获得永久稳定链接（重要）
+
+preview 链接的 token 约 40 小时过期。要永久稳定，需绑定自定义域名：
+
+1. 在火山引擎 IGA Pages 控制台添加自定义域名（如 pay.suka.net）
+2. 在你的域名 DNS 添加 CNAME 记录指向 IGA Pages 提供的地址
+3. 绑定后即可用 pay.suka.net 永久访问，无需 token
+
+控制台：https://console.volcengine.com/dcdn/pages/detail/r9bd34f6o5
