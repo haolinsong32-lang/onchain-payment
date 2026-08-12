@@ -1,4 +1,4 @@
-# 闲鱼上架 - 一键复制
+# 闲鱼上架 - 一键复制（兑换码模式）
 
 ## 步骤1：打开闲鱼App → 底部"卖闲置"
 
@@ -30,9 +30,11 @@ AI编程提示词工具包 100条ChatGPT/Claude/Cursor实战Prompt 复制即用
 兼容 ChatGPT / Claude / Cursor / Copilot
 复制粘贴即用，无需任何配置
 
-📦 拍下自动发货，秒收兑换码
+📦 拍下秒发兑换码，输入即解锁全部内容
 🔓 终身有效，永久更新
 💯 不满意24小时内可退款
+
+👥 购买后拉入飞书社区，AI变现交流群，永久免费
 
 ## 步骤4：发货方式
 选择"无需发货"或"虚拟发货"
@@ -43,11 +45,19 @@ AI编程提示词工具包 100条ChatGPT/Claude/Cursor实战Prompt 复制即用
 ---
 感谢购买AI编程提示词工具包！
 
-🔗 兑换链接：
-https://suka-pay-shop-r9bd34f6o5-19ur6g709s.preview.iga-pages.com/delivery.html?iga_token=82f9416366e24bf4e56af40929351551&iga_time=1786713877
-
 🔑 兑换码：PROMPT
-（区分大小写，直接输入即可解锁全部100条Prompt）
 
-如有问题随时联系，不满意可退款。
+📖 兑换方式：打开下方链接，输入兑换码即可解锁全部100条Prompt
+（也可下载离线TXT/ZIP，永久保存）
+
+🔗 兑换链接：
+https://suka-pay-shop-r9bd34f6o5-h9uahgk8hz.preview.iga-pages.com/delivery.html?iga_token=002bc44db25add17762c025887e52c10&iga_time=1786736167
+
+👥 加入飞书社区（AI变现交流群）：
+https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=5fapb619-808a-4ec2-99de-47fc8304afb5
+
+💬 微信：18192939315
+📧 邮箱：haolinsong32@gmail.com
+
+如有问题随时联系，不满意24小时内可退款。
 ---

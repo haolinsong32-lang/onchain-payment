@@ -11,26 +11,28 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-card: #16161f;
-            --bg-card-hover: #1c1c27;
-            --border: #2a2a3a;
-            --text-primary: #f0f0f5;
-            --text-secondary: #8888a0;
-            --text-muted: #555566;
-            --accent-cyan: #00d4ff;
-            --accent-purple: #a855f7;
-            --accent-green: #00ff88;
-            --accent-orange: #ff8800;
-            --accent-pink: #ff0080;
-            --accent-red: #ff4444;
+            --bg-primary: #05070c;
+            --bg-secondary: #0a0e18;
+            --bg-card: #10162a;
+            --bg-card-hover: #151d36;
+            --border: #1e2745;
+            --text-primary: #e8eeff;
+            --text-secondary: #8d97b4;
+            --text-muted: #5c6686;
+            --accent-cyan: #4df3ff;
+            --accent-purple: #9d6bff;
+            --accent-green: #b6ff2e;
+            --accent-orange: #ffb020;
+            --accent-pink: #ff3d8b;
+            --accent-red: #ff5c5c;
             --accent-blue: #1677ff;
             --wechat-green: #07c160;
             --alipay-blue: #1677ff;
-            --gradient-1: linear-gradient(135deg, #00d4ff, #a855f7);
-            --gradient-2: linear-gradient(135deg, #00ff88, #00d4ff);
-            --gradient-3: linear-gradient(135deg, #ff8800, #ff0080);
+            --gradient-1: linear-gradient(135deg, #4df3ff, #9d6bff);
+            --gradient-2: linear-gradient(135deg, #b6ff2e, #4df3ff);
+            --gradient-3: linear-gradient(135deg, #ffb020, #ff3d8b);
+            --glow-cyan: 0 0 18px rgba(77,243,255,.35);
+            --glow-pink: 0 0 18px rgba(255,61,139,.35);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -43,15 +45,49 @@
             overflow-x: hidden;
         }
 
+        ::selection { background: var(--accent-pink); color: #0a0210; }
+
         .noise {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; opacity: 0.03; z-index: 0;
+            pointer-events: none; opacity: 0.04; z-index: 60;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
         }
 
         .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.15; pointer-events: none; z-index: 0; }
         .bg-glow-1 { top: -200px; right: -200px; background: var(--accent-cyan); }
         .bg-glow-2 { bottom: -200px; left: -200px; background: var(--accent-purple); }
+
+        /* 透视网格地面（作品集风格） */
+        .bg-grid {
+            position: fixed; left: 0; right: 0; bottom: 0; height: 46vh; z-index: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(180deg, transparent, rgba(77,243,255,.05)),
+                repeating-linear-gradient(90deg, rgba(77,243,255,.12) 0 1px, transparent 1px 44px),
+                repeating-linear-gradient(0deg, rgba(77,243,255,.12) 0 1px, transparent 1px 44px);
+            transform: perspective(480px) rotateX(64deg);
+            transform-origin: bottom;
+            -webkit-mask-image: linear-gradient(180deg, transparent, #000 45%);
+                    mask-image: linear-gradient(180deg, transparent, #000 45%);
+            opacity: .6;
+        }
+
+        /* 扫描线（作品集风格） */
+        .scanlines {
+            position: fixed; inset: 0; z-index: 70; pointer-events: none; opacity: .05;
+            background: repeating-linear-gradient(0deg, rgba(255,255,255,.6) 0 1px, transparent 1px 3px);
+            mix-blend-mode: overlay;
+        }
+
+        /* 启动进度条 */
+        #bootbar { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 120; background: var(--bg-card); animation: bootbar-hide .4s ease 1.7s forwards; }
+        #bootbar::after {
+            content: ""; position: absolute; inset: 0; transform-origin: left;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-pink), var(--accent-green));
+            animation: boot 1.2s cubic-bezier(.22,.61,.36,1) forwards;
+        }
+        @keyframes boot { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+        @keyframes bootbar-hide { to { opacity: 0; } }
 
         .container { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
 
@@ -193,8 +229,11 @@
         }
     </style>
 </head>
-<body>
+<body class="booted">
+    <div id="bootbar"></div>
     <div class="noise"></div>
+    <div class="scanlines"></div>
+    <div class="bg-grid"></div>
     <div class="bg-glow bg-glow-1"></div>
     <div class="bg-glow bg-glow-2"></div>
 
